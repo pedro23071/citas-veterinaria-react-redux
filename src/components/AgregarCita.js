@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import uuid from 'uuid/v4';
 
 //importamos la accion
 import { agregarCitaAction } from '../actions/citasActions';
+import { validarFormurarioAction } from '../actions/validarActions';
 
 const AgregarCita = () => {
 
@@ -16,15 +17,28 @@ const AgregarCita = () => {
 
     //dispatch para ejecutar nuestras acciones
     const dispatch = useDispatch();
-    //le pasamos al dispatch la accion (2 y 3)
+    //le pasamos al dispatch la accion agregarCitaAction (2 y 3)..........
     const agregarNuevaCita = (cita) => dispatch( agregarCitaAction(cita) );
 
+    //le pasamos al dispatch la ccion de validar formulario (2 y 3)...........
+    const validarFormulario = (estado) => dispatch( validarFormurarioAction(estado) );
+
+    //acceder al state con useSelector() para mandar un mensaje si existe un error
+    const error = useSelector( (state) => state.error );
+
     // cuando el formulario es enviado capturamos los 
-    // datos utilizando agregarNuevaCita (1)
+    // datos utilizando agregarNuevaCita (1)...............
     const submitNuevaCita = e => {
         e.preventDefault();
 
-        //validar el formulario 
+        //validar el formulario
+        if ( mascota.trim() === '' || propietario.trim() === '' || fecha.trim() === '' || sintomas.trim() === ''){
+            validarFormulario(true);
+            return;
+        }
+
+        validarFormulario(false);
+
 
         //crear la nueva cita
         agregarNuevaCita({
@@ -38,6 +52,12 @@ const AgregarCita = () => {
 
 
         //reiniciar el formulario
+        guardarMascota('');
+        guardarPropietario('');
+        guardarFecha('');
+        guardarHora('');
+        guardarSintomas('');
+        
 
     }
     return(
@@ -103,12 +123,14 @@ const AgregarCita = () => {
                         </div>
                     </div>
                     <div className="form-group row justify-content-end">
-                        <div className="col-sm-3">
+                        <div className="col-sm-5">
                             <button type="submit" className="btn btn-success w-100">Agregar</button>
                         </div>
                     </div>
                 </form>
-               
+               {error.error ? <div className="alert alert-danger text-center p2">
+                   Todos los campos son obligatorios
+               </div>:null}
             </div>
     </div>
     );
