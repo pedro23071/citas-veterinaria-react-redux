@@ -1,13 +1,22 @@
 import { createStore } from 'redux';
 import reducer from './reducers/index';
 
-//Definir el estado inicial 
-//const initialState = [];
+//traemos las metodos de localStorage
+import {getStateStorage, setStateStorage} from './localStorage';
+
+//Definir el estado inicial (obtener citas de local storage) 
+const storageState = getStateStorage();
 
 const Store = createStore(
     reducer,
-    //initialState,
+    storageState,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
+
+Store.subscribe(() => {
+    setStateStorage({
+        cita: Store.getState().cita
+    })
+});
 
 export default Store;
